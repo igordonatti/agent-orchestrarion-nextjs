@@ -1,5 +1,3 @@
-import "dotenv/config";
-
 import { generateObject } from "ai";
 import { z } from "zod";
 import { createGroq } from "@ai-sdk/groq";
@@ -24,7 +22,12 @@ export async function implementTask(taskRequest: string) {
       tasks: z.array(
         z.object({
           purpose: z.string(),
-          taskName: z.string(),
+          taskName: z.enum([
+            "Audience research",
+            "Content creation",
+            "Account management",
+            "Performance analysis",
+          ]),
           changeType: z.enum(["create", "modify", "delete"]),
         })
       ),
@@ -49,10 +52,26 @@ export async function implementTask(taskRequest: string) {
           }[task.taskName] || "You are an expert profissional in this field.",
         modify:
           {
+            "Audience research":
+              "You are a Business Analyst. You improve audience research strategies to be more effective.",
+            "Content creation":
+              "You are a Content Strategist. You enhance content creation strategies to be more effective.",
             "Account management":
               "You are a Social Media Manager. You improve account management strategies to be more effective.",
+            "Performance analysis":
+              "You are a Marketing Analyst. You enhance performance analysis strategies to be more effective.",
           }[task.taskName] || "You are a specialist enhancing task efficiency.",
         delete:
+          {
+            "Audience research":
+              "You are an Operations Manager. You identify unnecessary audience research tasks and remove them efficiently.",
+            "Content creation":
+              "You are an Operations Manager. You identify unnecessary content creation tasks and remove them efficiently.",
+            "Account management":
+              "You are an Operations Manager. You identify unnecessary account management tasks and remove them efficiently.",
+            "Performance analysis":
+              "You are an Operations Manager. You identify unnecessary performance analysis tasks and remove them efficiently.",
+          }[task.taskName] ||
           "You are an Operations Manager. You identify unnecessary tasks and remove them efficiently.",
       }[task.changeType];
 
